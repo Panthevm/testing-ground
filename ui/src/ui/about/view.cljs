@@ -1,6 +1,6 @@
-(ns ui.home.view
+(ns ui.about.view
   (:require [ui.pages             :as pages]
-            [ui.home.model        :as model]
+            [ui.about.model       :as model]
             [reitit.frontend.easy :refer [href]]))
 
 (pages/reg-subs-page
@@ -8,5 +8,5 @@
  (fn [page]
    [:<>
     [:p (page :foo)]
-    [:a {:href (href :ui.about.model/index)} "About"]
+    [:a {:href (href :ui.home.model/index)} "Home"]
     [:p model/index-title]]))

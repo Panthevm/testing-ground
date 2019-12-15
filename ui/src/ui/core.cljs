@@ -4,12 +4,13 @@
             [ui.pages      :as pages]
             [ui.routes     :as routes]
 
-            [ui.home.view]))
+            [ui.home.view]
+            [ui.about.view]))
 
 (defn current-page []
   (let [route (rf/subscribe [::routes/get])]
     (fn []
-      (let [page (get @pages/pages (:page @route))]
+      (let [page (get @pages/pages (:name @route))]
         (if page
           [page]
           [:div "Страница не найдена"])))))

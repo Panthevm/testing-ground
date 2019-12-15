@@ -4,4 +4,4 @@ ui-repl:
 
 #Build
 ui-build:
-		cd ui/ &&	lein with-profile prod compile
+		cd ui && clj -m build

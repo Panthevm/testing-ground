@@ -1,11 +1,18 @@
 (ns ui.routes
-  (:require [re-frame.core :as rf]
-            [reitit.frontend :as rfrontend]
-            [reitit.frontend.easy :as reasy]))
+  (:require [re-frame.core               :as rf]
+            [ui.pages                    :as pages]
+            [reitit.frontend             :as rfrontend]
+            [reitit.frontend.easy        :as reasy]
+            [reitit.frontend.controllers :as rfc]))
 
 (def routes
   ["/"
-   [""  {:page :ui.home.model/index}]])
+   [""   {:name        :ui.home.model/index
+          :controllers [{:start (fn [] (prn "start" "index"))
+                         :stop  (fn [] (prn "stop" "index"))}]}]
+   ["a"  {:name        :ui.about.model/index
+          :controllers [{:start (fn [] (prn "start" "about"))
+                         :stop  (fn [] (prn "stop" "about"))}]}]])
 
 (rf/reg-sub
  ::get
@@ -14,12 +21,18 @@
 
 (rf/reg-event-db
  ::set
- (fn [db [_ v]]
-   (assoc db ::current v)))
+ (fn [db [_ {:keys [path data]}]]
+   (assoc db ::current {:path path
+                        :name (:name data)})))
 
 (defn init []
   (reasy/start!
    (rfrontend/router routes)
-   (fn [{:keys [path data]}]
-     (rf/dispatch [::set {:path path :page (:page data)}]))
+   (fn [new]
+     (update @pages/pages (get-in new [:data :name])
+             (fn [old]
+               (when new
+                 (assoc new
+                        :controllers (rfc/apply-controllers (:controllers old) new)))))
+     (rf/dispatch [::set new]))
    {:use-fragment true}))
