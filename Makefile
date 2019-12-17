@@ -1,6 +1,6 @@
 #Run
 ui-repl:
-	cd ui && DEBUG=true clj  -A:dev:nrepl
+	cd ui && DEBUG=true clj -A:dev:nrepl
 
 #Build
 ui-build:

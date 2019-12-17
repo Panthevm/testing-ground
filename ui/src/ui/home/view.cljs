@@ -1,12 +1,7 @@
 (ns ui.home.view
-  (:require [ui.pages             :as pages]
-            [ui.home.model        :as model]
-            [reitit.frontend.easy :refer [href]]))
+  (:require [ui.home.model :as model]))
 
-(pages/reg-subs-page
- model/index-page
- (fn [page]
-   [:<>
-    [:p (page :foo)]
-    [:a {:href (href :ui.about.model/index)} "About"]
-    [:p model/index-title]]))
+(defn index []
+  [:<>
+   [:a {:href "#/a"} "About"]
+   [:p model/index-title]])
