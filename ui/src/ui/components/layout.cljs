@@ -1,7 +1,8 @@
 (ns ui.components.layout
-  (:require [re-frame.core :as rf]
+  (:require [ui.style       :as styles]
+            [re-frame.core  :as rf]
             [clojure.string :as str]
-            [ui.helpers    :as h]))
+            [ui.helpers     :as h]))
 
 (defn current-nav [fragment navs]
   (map
@@ -16,15 +17,19 @@
  :<- [::h/db [:route :path]]
  (fn [fragment]
    (cond->> [{:title "Главная" :href "#/"}
-             {:title "О нас" :href "#/about"}]
+             {:title "О нас"   :href "#/about"}]
      fragment (current-nav fragment))))
 
 (defn layout []
-  (let [links (rf/subscribe [::menu])]
+  (let [links (rf/subscribe [::menu])
+        open? (rf/subscribe [::styles/expands :navbar])]
     (fn [body]
-      [:<>
-       [:div (map-indexed
-              (fn [idx {:keys [title href]}] ^{:key idx}
-                [:a {:href href} title])
-              @links)]
-       [:div body]])))
+      [:<> styles/app
+       [:nav (when @open? {:class "nav-expand"})
+        [:button {:on-click #(rf/dispatch [::styles/expands :navbar])}
+         (if @open? "X" "=")]
+        (map-indexed
+         (fn [idx link] ^{:key idx}
+           [:a.block link (:title link)])
+         @links)]
+       [:div.container body]])))

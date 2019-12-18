@@ -3,4 +3,8 @@
 
 (defn index []
   [:<>
+   [:div.row
+    [:div.col "1"]
+    [:div.col "2"]
+    [:div.col "3"]]
    [:p model/index-title]])
