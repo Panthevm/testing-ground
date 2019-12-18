@@ -4,4 +4,4 @@ ui-repl:
 
 #Build
 ui-build:
-		cd ui && clj -m build
+		cd ui && clj -A:prod

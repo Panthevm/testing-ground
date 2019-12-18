@@ -7,5 +7,4 @@
   (let [page @(rf/subscribe [model/index-page])]
     [:<>
      [:h1 (:foo page)]
-     [:a {:href "#/"} "Home"]
      [:p model/index-title]]))

@@ -1,14 +1,18 @@
 (ns ^:figwheel-hooks ui.core
-  (:require [reagent.core    :as reagent]
+  (:require [re-frame.core :as rf]
+            [reagent.core    :as reagent]
             [ui.routes       :as routes]
-            [reagent.session :as session]))
+
+            [ui.components.layout :as layout]))
 
 (defn current-page []
-  (fn []
-    (let [page (:page (session/get :route))]
-      (if page
-        [page]
-        [:div "Страница не найдена"]))))
+  (let [page (rf/subscribe [::routes/current])]
+    (fn []
+      (let [page (:page @page)]
+        (if page
+          [layout/layout
+           [page]]
+          [:div "Страница не найдена"])))))
 
 (defn mount []
   (routes/init)

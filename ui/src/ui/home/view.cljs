@@ -3,5 +3,4 @@
 
 (defn index []
   [:<>
-   [:a {:href "#/a"} "About"]
    [:p model/index-title]])
