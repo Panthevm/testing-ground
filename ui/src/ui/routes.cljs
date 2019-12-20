@@ -8,23 +8,28 @@
 
 (def routes
   ["/"
-   [""       {:view #'home/index}]
+   ["home"   {:view #'home/index}]
    ["about"  {:view #'about/index}]])
 
 (defn init []
-  (easy/start!
-   (reitit/router routes)
-   (fn [match]
-     (rf/dispatch [::set match]))
-   {:use-fragment true}))
+  (-> routes
+      reitit/router
+      (easy/start!
+       (fn [match] (rf/dispatch [::set match]))
+       {:use-fragment true})))
 
 (rf/reg-sub
  ::current
  (fn [db]
    (get db :route)))
 
+(rf/reg-sub
+ ::fragment
+ (fn [db]
+   (get-in db [:route :fragment])))
+
 (rf/reg-event-db
  ::set
  (fn [db [_ match]]
-   (assoc db :route {:fragment (:path match)
+   (assoc db :route {:fragment (str "#" (:path match))
                      :page     (get-in match [:data :view])})))

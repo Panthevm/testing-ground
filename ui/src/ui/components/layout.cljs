@@ -1,35 +1,26 @@
 (ns ui.components.layout
-  (:require [ui.style       :as styles]
-            [re-frame.core  :as rf]
-            [clojure.string :as str]
-            [ui.helpers     :as h]))
+  (:require [ui.style              :as styles]
+            [re-frame.core         :as rf]
+            [ui.components.buttons :as buttons]))
 
-(defn current-nav [fragment navs]
-  (map
-   (fn [link]
-     (if (str/includes? fragment (:href link))
-       (assoc link :class "active font-weight-bold")
-       link))
-   navs))
-
-(rf/reg-sub
- ::menu
- :<- [::h/db [:route :path]]
- (fn [fragment]
-   (cond->> [{:title "Главная" :href "#/"}
-             {:title "О нас"   :href "#/about"}]
-     fragment (current-nav fragment))))
+(def menu
+  [{:title "Главная" :href "#/home"}
+   {:title "О нас"   :href "#/about"}])
 
 (defn layout []
-  (let [links (rf/subscribe [::menu])
-        open? (rf/subscribe [::styles/expands :navbar])]
+  (let [open? (rf/subscribe [::styles/expands :navbar])]
     (fn [body]
-      [:<> styles/app
+      [:<> [styles/app]
        [:nav (when @open? {:class "nav-expand"})
-        [:button {:on-click #(rf/dispatch [::styles/expands :navbar])}
-         (if @open? "X" "=")]
+        [buttons/icon {:on-click #(rf/dispatch [::styles/expands :navbar])
+                       :icon     [[:span "X"]]}]
         (map-indexed
-         (fn [idx link] ^{:key idx}
-           [:a.block link (:title link)])
-         @links)]
+         (fn [idx attrs] ^{:key idx}
+           [buttons/link (assoc attrs :class "link")])
+         menu)
+        [buttons/icon {:on-click #(rf/dispatch [::styles/dark-theme])
+                       :icon     [[:img {:src "icon/menu.svg"}]]}]]
+       [buttons/icon {:on-click #(rf/dispatch [::styles/expands :navbar])
+                      :class    "fixed shadow"
+                      :icon     [[:img {:src "icon/menu.svg"}]]}]
        [:div.container body]])))

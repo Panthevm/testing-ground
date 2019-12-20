@@ -16,6 +16,7 @@
 
 (defn mount []
   (routes/init)
+  (rf/clear-subscription-cache!)
   (reagent/render [current-page] (js/document.getElementById "app")))
 
 (defn ^:after-load re-render [] (mount))

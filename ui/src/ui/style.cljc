@@ -3,8 +3,20 @@
             [garden.stylesheet :as stylesheet]
             [re-frame.core  :as rf]))
 
-(def template
-  {:color {:body "#e4e4e4"}})
+(rf/reg-event-db
+ ::dark-theme
+ (fn [db]
+   (update db :dark-theme not)))
+
+(rf/reg-sub
+ ::dark-theme
+ (fn [db]
+   (get db :dark-theme)))
+
+(def template;   [light]    [dark]
+  {:color {:body ["#e4e4e4" "#121212"]
+           :main ["#2680F3" "#1f1f1f"]
+           :text ["#333"    "#e2e2e2"]}})
 
 (rf/reg-sub
  ::expands
@@ -16,45 +28,63 @@
  (fn [db [_ key]]
    (update-in db [:open key] not)))
 
-(def app
-  [:style
-   (garden/css
-    (let [{:keys [color]} template]
-      (list
-       (stylesheet/at-media {:min-width "576px"}  [:.container {:max-width "540px"}])
-       (stylesheet/at-media {:min-width "768px"}  [:.container {:max-width "720px"}])
-       (stylesheet/at-media {:min-width "992px"}  [:.container {:max-width "960px"}])
-       (stylesheet/at-media {:min-width "1200px"} [:.container {:max-width "1140px"}])
-       [:html {:box-sizing "border-box"}]
-       [:*
-        [:&:before {:box-sizing "inherit"}]
-        [:&:after {:box-sizing "inherit"}]]
-       [:body {:background-color (:body color)}]
-       [:.container {:width        "100%"
-                     :margin-right "auto"
-                     :margin-left  "auto"}]
-       [:.row {:display   "flex"
-               :flex-wrap "wrap"}]
-       [:.col {:flex-basis "0"
-               :flex-grow  "1"
-               :border     "1px solid red"
-               :max-width  "100%"}]
+(defn app []
+  (let [dark-theme (rf/subscribe [::dark-theme])]
+    (fn []
+      (let [{:keys [color]} template
+            theme           (fn [colors]
+                              ((if @dark-theme last first) colors))]
+       [:style
+        (garden/css
+         (list
+          (stylesheet/at-media {:min-width "576px"}  [:.container {:max-width "540px"}])
+          (stylesheet/at-media {:min-width "768px"}  [:.container {:max-width "720px"}])
+          (stylesheet/at-media {:min-width "992px"}  [:.container {:max-width "960px"}])
+          (stylesheet/at-media {:min-width "1200px"} [:.container {:max-width "1140px"}])
+          [:html {:box-sizing "border-box"}]
+          [:*
+           [:&:before {:box-sizing "inherit"}]
+           [:&:after {:box-sizing "inherit"}]]
+          [:&:focus
+           {:outline "none"}]
+          [:body {:background-color (theme (:body color))
+                  :transition       "all 300ms ease"}]
+          [:.container {:width        "100%"
+                        :margin-right "auto"
+                        :margin-left  "auto"}]
+          [:.row {:display   "flex"
+                  :flex-wrap "wrap"}]
+          [:.col {:flex-basis "0"
+                  :flex-grow  "1"
+                  :border     "1px solid red"
+                  :max-width  "100%"}]
 
-       [:.block {:display "block"}]
+          [:.block {:display "block"}]
+          [:.fixed {:position "fixed"}]
+          [:.shadow {:box-shadow "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)"}]
+                                        ;Typography
+          [:a :span :p :h1
+           {:color (theme (:text color))}]
 
+                                        ;#Buttons
+          [:button {:border        "none"
+                    :border-radius "6px"}]
 
-       [:.nav-expand {:width "14rem"}]
-       [:nav {:position   "absolute"
-              :top        "0"
-              :left       "0"
-              :width      "3.5rem"
-              :height     "100%"
-              :background "#2680F3"
-              :transition "all 300ms ease"
-              :overflow   "hidden"
-              :z-index    "1"
-              :box-shadow "0px 0px 10px #333"}
+          [:.nav-expand {:left "-250px"}]
+          [:img {:height "28px" :width "28px"}]
+          [:nav {:position   "fixed"
+                 :top        "0"
+                 :left       "0"
+                 :width      "250px"
+                 :height     "100%"
+                 :background (theme (:main color))
+                 :transition "all 300ms ease"
+                 :overflow   "hidden"
+                 :z-index    "1"
+                 :box-shadow "0px 0px 3px #333"}
+           [:.link {:margin          "20px"
+                    :text-decoration "none"}]
 
-        [:button {:float "right"
-                  :background "inherit"}]
-        ])))])
+           [:button {:float      "right"
+                     :background "inherit"}]
+           ]))]))))
