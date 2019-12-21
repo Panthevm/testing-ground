@@ -22,4 +22,5 @@
        [buttons/icon {:on-click #(rf/dispatch [::styles/expands :navbar])
                       :class    "fixed shadow menu-open"
                       :icon     [[:div.menu-icon]]}]
-       [:div.container body]])))
+       [:div.container {:class (when @open? "body-wrapper")}
+        body]])))

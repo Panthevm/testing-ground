@@ -1,7 +1,7 @@
 (ns build
   (:require [cljs.build.api :as api]))
 
-(def source-dir "src/ui")
+(def source-dir "src")
 
 (def compiler-config
   {:output-to      "resources/public/js/app.js"

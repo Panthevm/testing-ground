@@ -52,6 +52,7 @@
                   :transition       "all 300ms ease"}]
           [:.container {:width        "100%"
                         :margin-right "auto"
+                        :transition "all 300ms ease"
                         :margin-left  "auto"}]
           [:.row {:display   "flex"
                   :flex-wrap "wrap"}]
@@ -66,18 +67,26 @@
           [:a :span :p :h1 :h3 :img
            {:color (theme (:text color))}]
           [:.active {:font-weight "600"}]
+                                        ;#Icon
+
+          [:img {:height "18px" :width "18px"}]
+          [:.close.icon :.menu-icon
+           {:color "white"}]
 
                                         ;#Buttons
           [:button {:border        "none"
                     :border-radius "6px"}]
 
+                                        ;#Navigation
           [:.nav-expand {:left "-250px"}]
-          [:img {:height "18px" :width "18px"}]
           [:.menu-open {:left "0"
+                        :background-color (theme (:main color))
                         :top "10px"
                         :border-radius "0px 6px 6px 0px"
                         :padding "15px 10px 15px 10px"}]
           [:.menu-close {:margin "10px 5px 0 0"}]
+          [:.body-wrapper {:padding-left "calc(6% + 250px)"
+                           :transition "all 300ms ease"}]
           [:nav {:position   "fixed"
                  :top        "0"
                  :left       "0"
