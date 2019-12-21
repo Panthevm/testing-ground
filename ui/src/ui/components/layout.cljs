@@ -4,23 +4,22 @@
             [ui.components.buttons :as buttons]))
 
 (def menu
-  [{:title "Главная" :href "#/home"}
-   {:title "О нас"   :href "#/about"}])
+  [{:title "Главная"   :href "#/"}
+   {:title "Настройки" :href "#/settings"}])
 
 (defn layout []
   (let [open? (rf/subscribe [::styles/expands :navbar])]
     (fn [body]
       [:<> [styles/app]
-       [:nav (when @open? {:class "nav-expand"})
+       [:nav (when-not @open? {:class "nav-expand"})
         [buttons/icon {:on-click #(rf/dispatch [::styles/expands :navbar])
-                       :icon     [[:span "X"]]}]
+                       :class    "menu-close"
+                       :icon     [[:div.close.icon]]}]
         (map-indexed
          (fn [idx attrs] ^{:key idx}
            [buttons/link (assoc attrs :class "link")])
-         menu)
-        [buttons/icon {:on-click #(rf/dispatch [::styles/dark-theme])
-                       :icon     [[:img {:src "icon/menu.svg"}]]}]]
+         menu)]
        [buttons/icon {:on-click #(rf/dispatch [::styles/expands :navbar])
-                      :class    "fixed shadow"
-                      :icon     [[:img {:src "icon/menu.svg"}]]}]
+                      :class    "fixed shadow menu-open"
+                      :icon     [[:div.menu-icon]]}]
        [:div.container body]])))

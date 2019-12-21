@@ -16,7 +16,7 @@
 (def template;   [light]    [dark]
   {:color {:body ["#e4e4e4" "#121212"]
            :main ["#2680F3" "#1f1f1f"]
-           :text ["#333"    "#e2e2e2"]}})
+           :text ["#000"    "#e2e2e2"]}})
 
 (rf/reg-sub
  ::expands
@@ -48,6 +48,7 @@
           [:&:focus
            {:outline "none"}]
           [:body {:background-color (theme (:body color))
+                  :font-family "GothamPro"
                   :transition       "all 300ms ease"}]
           [:.container {:width        "100%"
                         :margin-right "auto"
@@ -58,20 +59,25 @@
                   :flex-grow  "1"
                   :border     "1px solid red"
                   :max-width  "100%"}]
-
           [:.block {:display "block"}]
           [:.fixed {:position "fixed"}]
           [:.shadow {:box-shadow "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)"}]
-                                        ;Typography
-          [:a :span :p :h1
+                                        ;#Typography
+          [:a :span :p :h1 :h3 :img
            {:color (theme (:text color))}]
+          [:.active {:font-weight "600"}]
 
                                         ;#Buttons
           [:button {:border        "none"
                     :border-radius "6px"}]
 
           [:.nav-expand {:left "-250px"}]
-          [:img {:height "28px" :width "28px"}]
+          [:img {:height "18px" :width "18px"}]
+          [:.menu-open {:left "0"
+                        :top "10px"
+                        :border-radius "0px 6px 6px 0px"
+                        :padding "15px 10px 15px 10px"}]
+          [:.menu-close {:margin "10px 5px 0 0"}]
           [:nav {:position   "fixed"
                  :top        "0"
                  :left       "0"

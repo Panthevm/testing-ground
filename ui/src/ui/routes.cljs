@@ -3,13 +3,13 @@
             [reitit.frontend      :as reitit]
             [reitit.frontend.easy :as easy]
 
-            [ui.home.view  :as home]
-            [ui.about.view :as about]))
+            [ui.home.view     :as home]
+            [ui.settings.view :as settings]))
 
 (def routes
   ["/"
-   ["home"   {:view #'home/index}]
-   ["about"  {:view #'about/index}]])
+   [""          {:view #'home/index}]
+   ["settings"  {:view #'settings/index}]])
 
 (defn init []
   (-> routes
@@ -24,7 +24,7 @@
    (get db :route)))
 
 (rf/reg-sub
- ::fragment
+ :fragment
  (fn [db]
    (get-in db [:route :fragment])))
 

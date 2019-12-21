@@ -1,8 +1,8 @@
-(ns ui.about.model
+(ns ui.settings.model
   (:require [re-frame.core :as rf]))
 
 (def index-page  ::index)
-(def index-title "О нас")
+(def index-title "Настройки")
 
 (rf/reg-sub
  index-page

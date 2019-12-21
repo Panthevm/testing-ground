@@ -9,14 +9,13 @@
   (let [page (rf/subscribe [::routes/current])]
     (fn []
       (let [page (:page @page)]
-        (if page
-          [layout/layout
-           [page]]
-          [:div "Страница не найдена"])))))
+        [layout/layout
+         (if page
+           [page]
+           [:div "Страница не найдена"])]))))
 
 (defn mount []
   (routes/init)
-  (rf/clear-subscription-cache!)
   (reagent/render [current-page] (js/document.getElementById "app")))
 
 (defn ^:after-load re-render [] (mount))
