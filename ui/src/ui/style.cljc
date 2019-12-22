@@ -71,7 +71,7 @@
 
           [:img {:height "18px" :width "18px"}]
           [:.close.icon :.menu-icon
-           {:color "white"}]
+           {:color (theme (:text color))}]
 
                                         ;#Buttons
           [:button {:border        "none"

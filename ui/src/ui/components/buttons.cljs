@@ -1,5 +1,6 @@
 (ns ui.components.buttons
   (:require [re-frame.core  :as rf]
+            [frames.routing :as routing]
             [clojure.string :as str]))
 
 (defn icon
@@ -18,7 +19,7 @@
      match))
 
 (defn link []
-  (let [fragment (rf/subscribe [:fragment])]
+  (let [fragment (rf/subscribe [::routing/fragment])]
     (when @fragment
       (fn [{:keys [href] :as attr}]
         (let [attr (if (url-matches? href @fragment)

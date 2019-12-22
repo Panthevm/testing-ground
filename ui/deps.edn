@@ -1,6 +1,6 @@
 {:paths ["src" "resources"]
  :deps  {org.clojure/clojurescript {:mvn/version "RELEASE"}
-         metosin/reitit-frontend   {:mvn/version "RELEASE"}
+         metosin/reitit-core       {:mvn/version "RELEASE"}
          reagent                   {:mvn/version "RELEASE"}
          re-frame                  {:mvn/version "RELEASE"}
          garden                    {:mvn/version "RELEASE"}}
