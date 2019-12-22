@@ -64,92 +64,29 @@
         "/"
         fragment)))
   (-href [this path]
-    (if path
+    (when path
       (str "#" path))))
 
-
-(defn- event-target [event]
-  (let [original-event (.getBrowserEvent event)]
-    (if (exists? (.-composedPath original-event))
-      (aget (.composedPath original-event) 0)
-      (.-target event))))
-
-(defn- closest-by-tag [el tag]
-  (let [tag (.toUpperCase tag)]
-    (loop [el el]
-      (if el
-        (if (= tag (.-nodeName el))
-          el
-          (recur (.-parentNode el)))))))
-
-(defrecord Html5History [on-navigate router listen-key click-listen-key]
-  History
-  (-init [this]
-    (let [handler
-          (fn [e]
-            (-on-navigate this (-get-path this)))
-
-          ignore-anchor-click-predicate (:ignore-anchor-click? this)
-          ignore-anchor-click (fn [e]
-                                (when-let [el (closest-by-tag (event-target e) "a")]
-                                  (let [uri (.parse Uri (.-href el))]
-                                    (when (ignore-anchor-click-predicate router e el uri)
-                                      (.preventDefault e)
-                                      (let [path (str (.getPath uri)
-                                                      (when (.hasQuery uri)
-                                                        (str "?" (.getQuery uri)))
-                                                      (when (.hasFragment uri)
-                                                        (str "#" (.getFragment uri))))]
-                                        (.pushState js/window.history nil "" path)
-                                        (-on-navigate this path))))))]
-      (-on-navigate this (-get-path this))
-      (assoc this
-             :listen-key (gevents/listen js/window goog.events.EventType.POPSTATE handler false)
-             :click-listen-key (gevents/listen js/document goog.events.EventType.CLICK ignore-anchor-click))))
-  (-on-navigate [this path]
-    (on-navigate (match-by-path router path) this))
-  (-stop [this]
-    (gevents/unlistenByKey listen-key)
-    (gevents/unlistenByKey click-listen-key))
-  (-get-path [this]
-    (str (.. js/window -location -pathname)
-         (.. js/window -location -search)))
-  (-href [this path]
-    path))
-
 (defn start!
-  ([router on-navigate]
-   (start! router on-navigate nil))
-  ([router
-    on-navigate
-    {:keys [use-fragment]
-     :or {use-fragment true}
-     :as opts}]
-   (let [opts (-> opts
-                  (dissoc :use-fragment)
-                  (assoc :router router
-                         :on-navigate on-navigate))]
-     (-init (if use-fragment
-              (map->FragmentHistory opts)
-              (map->Html5History opts))))))
-
+  [router on-navigate]
+  (-init (map->FragmentHistory {:router router
+                                :on-navigate on-navigate})))
 
 (defn stop! [history]
-  (if history
+  (when history
     (-stop history)))
 
-(defn start
-  [router on-navigate opts]
+(defn navigate-action
+  [router on-navigate]
   (swap! history (fn [old-history]
                    (stop! old-history)
-                   (start! router on-navigate opts))))
+                   (start! router on-navigate))))
 
 (defn init [routes]
   (-> routes
       reitit/router
-      (start!
-       (fn [match] (rf/dispatch [::set match]))
-       {:use-fragment true})))
+      (navigate-action
+       (fn [match] (rf/dispatch [::set match])))))
 
 (rf/reg-event-db
  ::set
