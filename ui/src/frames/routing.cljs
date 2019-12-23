@@ -6,13 +6,13 @@
   (:import goog.Uri))
 
 (defonce history (atom nil))
+(defonce match   (atom nil))
 
 (defprotocol History
-  (-init [this] "Create event listeners")
-  (-stop [this] "Remove event listeners")
+  (-init        [this])
+  (-stop        [this])
   (-on-navigate [this path])
-  (-get-path [this])
-  (-href [this path]))
+  (-get-path    [this]))
 
 (defn- query-param [^goog.Uri.QueryData q k]
   (let [vs (.getValues q k)]
@@ -42,15 +42,14 @@
   History
   (-init [this]
     (let [last-fragment (atom nil)
-          this (assoc this :last-fragment last-fragment)
-          handler (fn [e]
-                    (let [path (-get-path this)]
-                      (when (or (= goog.events.EventType.POPSTATE (.-type e))
-                                (not= @last-fragment path))
-                        (-on-navigate this path))))]
+          this          (assoc this :last-fragment last-fragment)
+          handler       (fn []
+                          (let [path (-get-path this)]
+                            (when (not= @last-fragment path)
+                              (-on-navigate this path))))]
       (-on-navigate this (-get-path this))
       (assoc this
-             :popstate-listener (gevents/listen js/window goog.events.EventType.POPSTATE handler false)
+             :popstate-listener   (gevents/listen js/window goog.events.EventType.POPSTATE   handler false)
              :hashchange-listener (gevents/listen js/window goog.events.EventType.HASHCHANGE handler false))))
   (-stop [this]
     (gevents/unlistenByKey popstate-listener)
@@ -60,16 +59,19 @@
     (on-navigate (match-by-path router path) this))
   (-get-path [this]
     (let [fragment (subs (.. js/window -location -hash) 1)]
-      (if (= "" fragment)
-        "/"
-        fragment)))
-  (-href [this path]
-    (when path
-      (str "#" path))))
+      (if (= "" fragment) "/" fragment))))
+
+(defn hooks
+  [{{init-new :init} :data :as new}]
+  (swap! match (fn [{{deinit-old :deinit} :data :as old}]
+                 (when new
+                   (init-new)
+                   (when old (deinit-old))
+                   new))))
 
 (defn start!
   [router on-navigate]
-  (-init (map->FragmentHistory {:router router
+  (-init (map->FragmentHistory {:router      router
                                 :on-navigate on-navigate})))
 
 (defn stop! [history]
@@ -86,11 +88,14 @@
   (-> routes
       reitit/router
       (navigate-action
-       (fn [match] (rf/dispatch [::set match])))))
+       (fn [match]
+         (hooks match)
+         (rf/dispatch [::set match])))))
 
 (rf/reg-event-db
  ::set
  (fn [db [_ match]]
+   (prn "::set")
    (assoc db :route {:fragment (str "#" (:path match))
                      :page     (get-in match [:data :view])})))
 

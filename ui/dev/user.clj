@@ -12,3 +12,6 @@
 
 (defonce state
   (future (figwheel/start options)))
+
+(comment
+  (figwheel/cljs-repl "app"))
