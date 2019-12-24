@@ -5,7 +5,7 @@
 
 (def menu
   [{:title "Главная"   :href "#/"}
-   {:title "Настройки" :href "#/settings"}])
+   {:title "Настройки" :href "#/settings/main"}])
 
 (defn layout []
   (let [open? (rf/subscribe [::styles/expands :navbar])]
