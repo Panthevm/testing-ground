@@ -1,8 +1,7 @@
 (ns frames.routing
-  (:require [reitit.core   :as reitit]
-            [re-frame.core :as rf]
+  (:require [re-frame.core  :as rf]
             [clojure.string :as str]
-            [goog.events   :as gevents]))
+            [goog.events    :as gevents]))
 
 (defn location->path [location]
   (-> location
@@ -19,18 +18,13 @@
     {:page (get-in routes path)
      :path window-location}))
 
-(defn fragment-history [routes]
+(defn routing [routes]
   (let [on-navigate (fn [] (rf/dispatch [::set (match-path routes)]))
         listen      (fn [] (gevents/listen    js/window "hashchange" on-navigate))
         unlisten    (fn [] (gevents/removeAll js/window "hashchange"))]
     (on-navigate)
     (unlisten)
     (listen)))
-
-(defn init [routes]
-  (-> routes
-      #_reitit/router
-      fragment-history))
 
 (rf/reg-event-db
  ::set

@@ -15,7 +15,7 @@
            [:div "Страница не найдена"])]))))
 
 (defn mount []
-  (routing/init routes/routes)
+  (routing/routing routes/routes)
   (reagent/render [current-page] (js/document.getElementById "app")))
 
 (defn ^:after-load re-render [] (mount))
