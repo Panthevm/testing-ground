@@ -7,16 +7,15 @@
   (-> location
       (str/split #"/")
       next
-      (->> (map #(keyword %)))
-      vec))
+      (->> (mapv keyword))
+      not-empty))
 
 (defn match-path
   [routes]
-  (let [window-location (.. js/window -location -hash)
-        path (-> window-location location->path)
-        path (if (empty? path) [:.] path)]
+  (let [location (.. js/window -location -hash)
+        path     (->> location location->path (or [:.]))]
     {:page (get-in routes path)
-     :path window-location}))
+     :path location}))
 
 (defn routing [routes]
   (let [on-navigate (fn [] (rf/dispatch [::set (match-path routes)]))
