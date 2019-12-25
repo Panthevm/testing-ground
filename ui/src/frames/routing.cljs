@@ -13,7 +13,7 @@
 (defn match-path
   [routes]
   (let [location (.. js/window -location -hash)
-        path     (->> location location->path (or [:.]))]
+        path     (-> location location->path (or [:.]))]
     {:page (get-in routes path)
      :path location}))
 

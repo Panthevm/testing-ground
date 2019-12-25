@@ -18,16 +18,6 @@
            :main ["#2680F3" "#1f1f1f"]
            :text ["#000"    "#e2e2e2"]}})
 
-(rf/reg-sub
- ::expands
- (fn [db [_ key]]
-   (get-in db [:open key])))
-
-(rf/reg-event-db
- ::expands
- (fn [db [_ key]]
-   (update-in db [:open key] not)))
-
 (defn app []
   (let [dark-theme (rf/subscribe [::dark-theme])]
     (fn []
@@ -41,52 +31,43 @@
           (stylesheet/at-media {:min-width "768px"}  [:.container {:max-width "720px"}])
           (stylesheet/at-media {:min-width "992px"}  [:.container {:max-width "960px"}])
           (stylesheet/at-media {:min-width "1200px"} [:.container {:max-width "1140px"}])
-          [:html {:box-sizing "border-box"}]
-          [:*
-           [:&:before {:box-sizing "inherit"}]
-           [:&:after {:box-sizing "inherit"}]]
-          [:&:focus
-           {:outline "none"}]
+          [:&:focus {:outline "none"}]
           [:body {:background-color (theme (:body color))
-                  :font-family "GothamPro"
-                  :transition       "all 300ms ease"}]
+                  :font-family      "GothamPro"}]
           [:.container {:width        "100%"
                         :margin-right "auto"
-                        :transition "all 300ms ease"
+                        :transition   "all 300ms ease"
                         :margin-left  "auto"}]
+                                        ;#Aliases
+          [:.block {:display "block"}]
+                                        ;#Grid
           [:.row {:display   "flex"
                   :flex-wrap "wrap"}]
           [:.col {:flex-basis "0"
                   :flex-grow  "1"
                   :border     "1px solid red"
                   :max-width  "100%"}]
-          [:.block {:display "block"}]
-          [:.fixed {:position "fixed"}]
-          [:.shadow {:box-shadow "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)"}]
                                         ;#Typography
           [:a :span :p :h1 :h3 :img
            {:color (theme (:text color))}]
           [:.active {:font-weight "600"}]
                                         ;#Icon
 
-          [:img {:height "18px" :width "18px"}]
           [:.close.icon :.menu-icon
            {:color (theme (:text color))}]
-
                                         ;#Buttons
           [:button {:border        "none"
                     :border-radius "6px"}]
 
                                         ;#Navigation
           [:.nav-expand {:left "-250px"}]
-          [:.menu-open {:left "0"
+          [:.menu-open {:left             "0"
+                        :position         "fixed"
                         :background-color (theme (:main color))
-                        :top "10px"
-                        :border-radius "0px 6px 6px 0px"
-                        :padding "15px 10px 15px 10px"}]
+                        :top              "10px"
+                        :border-radius    "0px 6px 6px 0px"
+                        :padding          "15px 10px 15px 10px"}]
           [:.menu-close {:margin "10px 5px 0 0"}]
-          [:.body-wrapper {:padding-left "calc(6% + 250px)"
-                           :transition "all 300ms ease"}]
           [:nav {:position   "fixed"
                  :top        "0"
                  :left       "0"
@@ -99,7 +80,5 @@
                  :box-shadow "0px 0px 3px #333"}
            [:.link {:margin          "20px"
                     :text-decoration "none"}]
-
            [:button {:float      "right"
-                     :background "inherit"}]
-           ]))]))))
+                     :background "inherit"}]]))]))))
