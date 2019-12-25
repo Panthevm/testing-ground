@@ -1,8 +1,5 @@
 {:paths ["src" "resources"]
- :deps  {org.clojure/clojurescript {:mvn/version "RELEASE"}
-         reagent                   {:mvn/version "RELEASE"}
-         re-frame                  {:mvn/version "RELEASE"}
-         garden                    {:mvn/version "RELEASE"}}
+ :deps  {org.clojure/clojurescript {:mvn/version "RELEASE"}}
 
  :aliases {:dev  {:extra-paths ["dev"]
                   :extra-deps  {re-frisk                  {:mvn/version "0.5.4.1"}

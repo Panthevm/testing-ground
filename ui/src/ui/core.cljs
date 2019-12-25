@@ -1,21 +1,52 @@
 (ns ^:figwheel-hooks ui.core
-  (:require [re-frame.core        :as rf]
-            [reagent.core         :as reagent]
-            [ui.routes            :as routes]
-            [frames.routing       :as routing]
-            [ui.components.layout :as layout]))
+  (:require [cljs.spec.alpha :as spec]
+            [goog.dom :as dom]))
 
-(defn current-page []
-  (let [page (rf/subscribe [::routing/current])]
-    (fn []
-      (let [page (:page @page)]
-        [layout/layout
-         (if page
-           [page]
-           [:div "Страница не найдена"])]))))
+(spec/def :hiccup/element
+  (spec/and
+   vector?
+   (spec/cat
+    :tag      keyword?
+    :attr     (spec/? map?)
+    :children (spec/* :hiccup/form))))
+
+(spec/def :hiccup/form
+  (spec/or
+   :element :hiccup/element
+   :any     any?))
+
+(defmulti compile-hiccup first)
+
+(defmethod compile-hiccup :any [[_ value]]
+  value)
+
+(defmethod compile-hiccup :element [[_ {:keys [tag attr children]}]]
+  [tag attr children]
+  (apply
+   dom/createDom
+   (name tag)
+   (clj->js attr)
+   (map compile-hiccup children)))
+
+(defn render [element node]
+  (->> element
+       (spec/conform :hiccup/form)
+       compile-hiccup
+       (dom/append node)))
+
+(def page
+  [:h1 {:title "title"} "Title"])
 
 (defn mount []
-  (routing/routing routes/routes)
-  (reagent/render [current-page] (js/document.getElementById "app")))
+  (render page (js/document.querySelector "#app")))
+
+
+
+
+
+
+
+
+
 
 (defn ^:after-load re-render [] (mount))
