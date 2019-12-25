@@ -1,4 +1,4 @@
-(ns ^:figwheel-hooks ui.core
+(ns ^:figwheel-hooks app.core
   (:require [cljs.spec.alpha :as spec]
             [goog.dom :as dom]))
 

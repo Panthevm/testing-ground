@@ -2,11 +2,7 @@
  :deps  {org.clojure/clojurescript {:mvn/version "RELEASE"}}
 
  :aliases {:dev  {:extra-paths ["dev"]
-                  :extra-deps  {re-frisk                  {:mvn/version "0.5.4.1"}
-                                binaryage/devtools        {:mvn/version "0.9.11"}
-                                com.bhauman/figwheel-main {:mvn/version "0.2.3"}}}
-           :prod {:extra-paths ["prod"]
-                  :main-opts   ["-m" "build"]}
+                  :extra-deps  {com.bhauman/figwheel-main {:mvn/version "0.2.3"}}}
 
            :nrepl {:extra-deps {cider/cider-nrepl {:mvn/version "0.22.4"}
                                 cider/piggieback  {:mvn/version "0.4.0"}}

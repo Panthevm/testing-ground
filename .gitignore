@@ -1,5 +1,5 @@
-ui/resources/public/js/app.js
-ui/resources/public/js/out
-ui/.cpcache
-ui/.nrepl-port
+resources/public/js/app.js
+resources/public/js/out
+.cpcache
+.nrepl-port
 .dir-locals.el
