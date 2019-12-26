@@ -30,9 +30,9 @@
    (map compile-hiccup children)))
 
 (defn changed? [[_ old] [_ new]]
-  (and
-   (= (:tag old) (:tag new))
-   (= (:content old) (:content old))))
+  (if (and (map? old) (map? new))
+    (not= (:tag old) (:tag new))
+    (not= old new)))
 
 (defn childNodes-idx [parent key]
   (aget (.. parent -childNodes) (or key 0)))
@@ -59,19 +59,17 @@
 
 (defn update-element [parent old new & [key]]
   (cond
-    (not old)                    (appendChild  parent new)
-    (not new)                    (removeChild  parent key)
-    (changed? old new) (replaceChild parent new key)
-    #_(= :element (first new))        #_(let [[_ {new-c :children}] new
-                                            [_ {old-c :children}] old]
-                                      (map
-                                       (fn [idx]
-                                         (update-element
-                                          (childNodes-idx parent key)
-                                          (nth old-c idx)
-                                          (nth new-c idx)
-                                          idx))
-                                       (range (count (or new-c old-c)))))))
+    (nil? old)               (appendChild  parent new)
+    (nil? new)               (removeChild  parent key)
+    (changed? old new)       (replaceChild parent new key)
+    (= :element (first new)) (let [[_ {new-c :children}] new
+                                   [_ {old-c :children}] old]
+                               (doall
+                                (map-indexed
+                                 (fn [idx [o n]]
+                                   (prn "@@@" idx)
+                                   (update-element (childNodes-idx parent key) o n idx))
+                                 (map vector new-c (concat old-c (repeat nil))))))))
 
 (defn render [new parent]
   (let [old @vdom]
@@ -80,15 +78,27 @@
          (reset! vdom)
          (update-element parent old))))
 
-
 (def page
-  "1")
+  [:div
+   [:h1 "DOM"]
+   [:div
+    [:h1 {:label "label"} "1"]]])
 
 (comment
   (->> page (spec/conform :hiccup/form)))
 
 (defn mount []
-  (js/setInterval #(render (rand) (js/document.querySelector "#app"))
+  (js/setInterval #(render [:div
+                            [:h1 (if (zero? (rand-int 2))
+                                   "Чувашский"
+                                   "DOM")]
+                            [:div
+                             [:div
+                              [:h1 {:label "label"} (rand)]
+                              ]]
+                            [:div
+                             [:h1 {:label "label"} (rand)]
+                             [:h1 {:label "label"} "1"]]] (js/document.querySelector "#app"))
                   0))
 
 
