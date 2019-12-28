@@ -1,16 +1,20 @@
 (ns ^:figwheel-hooks app.core
   (:require [app.render :as render]
-            [app.state-handler :as ne-rf]))
+            [app.state-handler :as state]))
 
 (def some-comp
   (with-meta (fn [{:keys [some-comp-sub]}]
                [:div (str "123" some-comp-sub)])
     {:subs [:some-comp-sub]}))
 
-(defn page [_]
-  [:div
-   [:h1 "!@#"]
-   [:div some-comp]])
+(def page
+  (with-meta
+    (fn [_]
+      [:div
+       [:button {:onclick #(state/dispatch [:inc-state])} "123"]
+       [:h1 "!@#"]
+       [:div some-comp]])
+    {:subs []}))
 
 (def layout
   (with-meta
