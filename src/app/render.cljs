@@ -1,5 +1,6 @@
 (ns app.render
   (:require [app.dom    :as dom]
+            [app.state-handler :as rf]
             [app.hiccup :as hiccup]))
 
 (defonce vdom (atom nil))
@@ -11,9 +12,16 @@
             (select-keys (:attr new) [:style :id :class :width :height]))
       (and (= :content type-n) (not= old new))))
 
+(defn component? [[type v]]
+  (if (fn? (first v))
+    (do
+      (rf/reg-sub :sub (first v))
+      (hiccup/conform ((first v))))
+    [type v]))
+
 (defn update-element [parent old new & [key]]
-  (let [[o-type o-attr] old
-        [n-type n-attr] new]
+  (let [[o-type o-attr] (component? old)
+        [n-type n-attr] (component? new)]
     (cond
       (= new old)         nil
       (nil? old)          (dom/append-child  parent new)
@@ -37,3 +45,4 @@
          hiccup/conform
          (reset! vdom)
          (update-element root old))))
+

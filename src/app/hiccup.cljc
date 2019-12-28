@@ -12,8 +12,8 @@
 
 (spec/def :hiccup/form
   (spec/or
-   :element :hiccup/element
-   :content any?))
+   :element   :hiccup/element
+   :content   any?))
 
 (defn conform
   [hiccup]
