@@ -5,10 +5,11 @@
 (defonce vdom (atom nil))
 
 (defn changed? [[type-o old] [type-n new]]
-  (and (= (:tag old) (:tag new))
-       (or (not= :content type-n) (= old new))
-       (= type-o type-n)
-       (= (:attr old) (:attr new))))
+  (or (not= (:tag old) (:tag new))
+      (not= type-o type-n)
+      (not= (select-keys (:attr old) [:style :id :class :width :height])
+            (select-keys (:attr new) [:style :id :class :width :height]))
+      (and (= :content type-n) (not= old new))))
 
 (defn update-element [parent old new & [key]]
   (let [[o-type o-attr] old
