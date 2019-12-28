@@ -1,7 +1,8 @@
 (ns ^:figwheel-hooks app.core
-  (:require [app.render :as render]))
+  (:require [app.render :as render]
+            [app.state-handler :as ne-rf]))
 
-(defn page []
+(defn page [db]
   [:div
    [:button {:onclick #(prn "Click")} "Click"]
    [:h1  "1"]
@@ -17,3 +18,4 @@
 (defn mount [])
 
 (defn ^:after-load re-render [] (mount))
+

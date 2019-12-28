@@ -31,9 +31,9 @@
                                     (range (max (count n-child)
                                                 (count o-child)))))))))
 
-(defn mount [new parent]
+(defn render [view root]
   (let [old @vdom]
-    (->> new
+    (->> view
          hiccup/conform
          (reset! vdom)
-         (update-element parent old))))
+         (update-element root old))))
