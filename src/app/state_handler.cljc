@@ -33,7 +33,7 @@
       {}
       @subs)))
 
-(comment
+#_(comment
   (do (clojure.pprint/pprint @ssubs)
       (clojure.pprint/pprint @subs)
       (clojure.pprint/pprint @events)
