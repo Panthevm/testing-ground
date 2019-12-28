@@ -23,7 +23,7 @@
 
 (defn mount []
   (render/render layout
-                           (js/document.querySelector "#app")))
+                 (js/document.querySelector "#app")))
 
 (defn ^:after-load re-render [] (mount))
 

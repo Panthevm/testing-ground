@@ -8,9 +8,31 @@
 (def ssubs (atom nil))
 (def events (atom nil))
 
-(add-watch state :watcher
-  (fn [key atom old-state new-state]
-    new-state))
+(add-watch
+ state :watcher
+ (fn [old-state new-state]
+   (let [ssubs @ssubs
+         subs @*subs
+         changed (remove (fn [{:keys [new old]}]
+                           (= new old))
+                         (map
+                          (fn [[k {:keys [f]}]]
+                            {:key k
+                             :new (f new-state)
+                             :old (f old-state)})
+                          ssubs))
+         sssssssubs (reduce
+                     (fn [a v]
+                       (assoc a (:subs v) v))
+                     {}
+                     subs)
+         ]
+     (map
+      (fn [{:keys [key]}]
+        )
+      changed)
+     )
+   new-state))
 
 (defn reg-event-db [k f]
   (swap! events assoc k f))
@@ -29,7 +51,7 @@
   (let [db @state
         ssubs @ssubs]
     (reduce-kv
-      (fn [acc k {:keys [f subs]}]
+     (fn [acc k {:keys [f subs]}]
         (assoc acc k (apply f (map (fn [{:keys [f]}]
                                      (f db))
                                    (map #(% ssubs) subs)))))
