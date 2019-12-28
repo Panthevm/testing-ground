@@ -11,10 +11,23 @@
 
 (spec/def :hiccup/form
   (spec/or
-   :element :hiccup/element
-   :content any?))
+   :element   :hiccup/element
+   :content   any?))
 
 (defn conform
   [hiccup]
   (spec/conform :hiccup/form hiccup))
 
+(defn page []
+  [:div
+   [:h1
+    "!@#"]])
+
+(defn layout []
+  (let [db {:h1   "h1"
+            :page "page"}]
+    [:div
+     [:h1 (:h1 db)]
+     #_[page]]))
+
+(conform [layout])

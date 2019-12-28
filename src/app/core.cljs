@@ -3,17 +3,25 @@
 
 (defn page []
   [:div
-   [:button {:onclick #(prn "Click")} "Click"]
-   [:h1  "1"]
-   [:div
-    [:h1 "#" (apply str (when (zero? (rand-int 2)) (take (rand-int 30) (repeat "#"))))]]
-   [:div [:canvas {:width (rand-int 500) :height (rand-int 500) :style "border:10px solid #000000;"}]]
-   ])
+   [:h1
+    "!@#"]])
 
-(defonce a (js/setInterval #(render/mount (page)
-                                          (js/document.querySelector "#app"))
-                           0))
+(defn layout []
+  (let [db {:h1   "h1"
+            :page "page"}]
+    [:div
+     [:h1 (:h1 db)]
+     [:h2 "@#@#!#!@#"]
+     [:h2 "@#@#!#!@#"]
+     [:h2 "@#@#!#!@#"]
+     [:h2 "@#@#!#!@#"]
+     [:h2 "@#@#!#!@#"]
+     [:h2 "@#@#!#!@#"]
+     [:h2 "@#@#!#!@#"]
+     [page]]))
 
-(defn mount [])
+(defn mount []
+  (render/render [layout]
+                           (js/document.querySelector "#app")))
 
 (defn ^:after-load re-render [] (mount))
