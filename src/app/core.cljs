@@ -2,8 +2,9 @@
   (:require [app.render :as render]))
 
 (defn page []
-  [:div
-   [:h1 "1"]
+  [:div {:style "color: red"}
+   [:button {:onclick #(prn "Click")} "Click"]
+   [:h1  "1"]
    [:h1 "#" (apply str (when (zero? (rand-int 2)) (take (rand-int 30) (repeat "#"))))]
    [:h1 "#" (apply str (when (zero? (rand-int 2)) (take (rand-int 30) (repeat "#"))))]
    [:h1 "#" (apply str (when (zero? (rand-int 2)) (take (rand-int 30) (repeat "#"))))]
@@ -16,7 +17,7 @@
 
 (defonce a (js/setInterval #(render/mount (page)
                                           (js/document.querySelector "#app"))
-                           1000))
+                           0))
 
 (defn mount [])
 

@@ -5,9 +5,10 @@
 (defonce vdom (atom nil))
 
 (defn changed? [[type-o old] [type-n new]]
-  (or (not= (:tag old) (:tag new))
-      (not= type-o type-n)
-      (and (= :content type-n) (not= old new))))
+  (and (= (:tag old) (:tag new))
+       (or (not= :content type-n) (= old new))
+       (= type-o type-n)
+       (= (:attr old) (:attr new))))
 
 (defn update-element [parent old new & [key]]
   (let [[o-type o-attr] old
