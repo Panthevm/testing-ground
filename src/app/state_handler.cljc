@@ -1,5 +1,6 @@
 (ns app.state-handler)
 
+(def render-atom (atom nil))
 (def state (atom nil))
 (def *subs (atom nil))
 (def ssubs (atom nil))
@@ -34,14 +35,16 @@
            changed)
          changed-ss (filter (fn [[_ {:as v :keys [subs]}]]
                               (some (partial get changed-reduced) subs))
-                            subscriptions)]
-     (prn
+                            subscriptions)
+       res
        (reduce-kv
          (fn [acc k {:keys [f subs]}]
            (assoc acc k (apply f (map #(get-in all-reduced [% :new])
                                       subs))))
          {}
-         (reduce (fn [a [k v]] (assoc a k v)) {} changed-ss))))))
+         (reduce (fn [a [k v]] (assoc a k v)) {} changed-ss))]
+     (prn res)
+     (reset! render-atom res))))
 
 (defn reg-event-db [k f]
   (swap! events assoc k f))
@@ -77,6 +80,10 @@
     (reg-event-db
       :inc-state
       (fn [db] (swap! db update-in [:amount :value] inc)))
+
+    (reg-event-db
+      :change-some
+      (fn [db] (swap! db assoc :some (rand))))
 
     (reg-ssub
       :->amount

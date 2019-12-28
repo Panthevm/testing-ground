@@ -11,7 +11,8 @@
   (with-meta
     (fn [_]
       [:div
-       [:button {:onclick #(state/dispatch [:inc-state])} "123"]
+       [:button {:onclick #(state/dispatch [:inc-state])} "Inc state"]
+       [:button {:onclick #(state/dispatch [:change-some])} "Change some"]
        [:h1 "!@#"]
        [:div some-comp]])
     {:subs []}))
