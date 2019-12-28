@@ -1,5 +1,4 @@
-(ns app.state-handler
-  (:require [app.render :as rend]))
+(ns app.state-handler)
 
 (def state (atom nil))
 
