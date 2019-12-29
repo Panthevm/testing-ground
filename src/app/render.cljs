@@ -11,8 +11,8 @@
 (defn changed? [[type-o old] [type-n new]]
   (or (not= (:tag old) (:tag new))
       (not= type-o type-n)
-      (not= (select-keys (:attr old) [:value :style :id :class :width :height])
-            (select-keys (:attr new) [:value :style :id :class :width :height]))
+      (not= (:attr old)
+            (:attr new))
       (and (= :content type-n) (not= old new))))
 
 (defn component? [[type v]]
@@ -28,10 +28,9 @@
   (let [[o-type o-attr] (component? old)
         [n-type n-attr] (component? new)]
     (cond
-      (= new old)         nil
       (nil? old)          (dom/append-child  parent new)
-      (nil? new)          (dom/remove-child  parent key)
-      (changed? old new)  (dom/replace-child parent new key)
+      (nil? new)          (dom/remove-child  parent old)
+      (changed? old new)  (dom/replace-child parent old key)
       (= :element n-type) (let [{n-child :children} n-attr
                                 {o-child :children} o-attr]
                             (doall (map-indexed

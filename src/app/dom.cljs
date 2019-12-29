@@ -5,7 +5,8 @@
 (defmulti node first)
 
 (defmethod node :content [[_ value]]
-  (dom/createTextNode value))
+  (when value
+    (dom/createTextNode value)))
 
 (defmethod node :element [[_ {:keys [tag attr children]}]]
   (apply dom/createDom
@@ -14,17 +15,16 @@
          (map node children)))
 
 (defn nodes-idx [parent key]
-  (aget (.. parent -childNodes) (or key 0)))
+  (aget (.-childNodes parent) (or key 0)))
 
-(defn append-child [parent child]
-  (.appendChild parent
-                (node child)))
+(defn append-child
+  ([parent child]
+   (dom/appendChild parent
+                    (node child))))
 
 (defn remove-child [parent key]
-  (.removeChild parent
-                (nodes-idx parent key)))
+  (dom/removeNode (nodes-idx parent key)))
 
 (defn replace-child [parent new key]
-  (.replaceChild parent
-                 (node new)
-                 (nodes-idx parent key)))
+  (dom/replaceNode (node new)
+                   (nodes-idx parent key)))

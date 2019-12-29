@@ -11,10 +11,9 @@
   (with-meta
     (fn [{:keys [form] :as ss}]
       [:div
-       [:h1 (str form)]
-       [:h1 (str form)]
-
-       [:h1 (str form)]
+       [:h1 form]
+       [:h1 "@#!@#!@"]
+       [:button {:onclick #(state/dispatch [:inc-state])} "Inc state"]
        [:button {:onclick #(state/dispatch [:inc-state])} "Inc state"]
        [:button {:onclick #(state/dispatch [:change-some])} "Change some"]
        [:input {:value form
