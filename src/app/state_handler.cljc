@@ -17,7 +17,7 @@
                        :subs (drop-last args)}))
 
 (defn dispatch [[k & args]]
-  (apply (get @events k) state args))
+  (swap! state #(apply (get @events k) % args)))
 
 (defn get-init-subs []
   (let [db @state
@@ -71,15 +71,15 @@
 
 (do (reg-event-db
       :change-some
-      (fn [db] (swap! db assoc :some (rand))))
+      (fn [db] (assoc db :some (rand))))
 
     (reg-event-db
      :input
-     (fn [db value] (swap! db assoc :input value)))
+     (fn [db value] (assoc db :input value)))
 
     (reg-event-db
       :append-to-list
-      (fn [db] (swap! db update :list-elemets conj (rand))))
+      (fn [db] (update db :list-elemets conj (rand))))
 
     (reg-ssub
      :->list
@@ -112,7 +112,7 @@
 
     (reg-event-db
       :inc-state
-      (fn [db] (swap! db update-in [:amount :value] #(if % (inc %) 0))))
+      (fn [db] (update-in db [:amount :value] #(if % (inc %) 0))))
 
     (reg-ssub
       :->amount
