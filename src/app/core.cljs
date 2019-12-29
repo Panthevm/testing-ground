@@ -2,6 +2,9 @@
   (:require [app.render :as render]
             [app.state-handler :as state]))
 
+(defn comp-without-sub [form]
+  [:div (str "FORM VALUE: " form)])
+
 (def some-comp
   (with-meta (fn [{:keys [some-comp-sub]}]
                [:div (str "123" some-comp-sub)])
@@ -12,13 +15,11 @@
     (fn [{:keys [form] :as ss}]
       [:div
        [:h1 (str form)]
-       [:h1 (str form)]
-
-       [:h1 (str form)]
        [:button {:onclick #(state/dispatch [:inc-state])} "Inc state"]
        [:button {:onclick #(state/dispatch [:change-some])} "Change some"]
        [:input {:value form
                 :onchange #(state/dispatch [:input (.. % -target -value)])}]
+       (comp-without-sub form)
        [:div some-comp]])
     {:subs [:form]}))
 

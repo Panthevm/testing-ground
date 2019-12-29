@@ -58,8 +58,6 @@
          (reset! vdom)
          (update-element root old))))
 
-
-
 (defn re-render [new-state hiccup]
   (prewalk (fn [node]
              (if-let [subs (seq (:subs (meta node)))]
@@ -75,7 +73,9 @@
 (add-watch
  state/render-atom
  :render
- (fn [_ _ _ new-state]
+ (fn [_ _ old-state new-state]
+   (prn "old state: " old-state)
+   (prn "new state: " new-state)
    (let [old @vdom]
      (->> @hiccup-dom
           (re-render new-state)

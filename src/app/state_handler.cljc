@@ -9,8 +9,8 @@
 (add-watch
  state :watcher
  (fn [_ _ old-state new-state]
-   (prn "watcher")
-   (let [ssubs @ssubs
+   (let [old-render-state @render-atom
+         ssubs @ssubs
          subscriptions @*subs
          all-ssubs (map
                      (fn [[k {:keys [f]}]]
@@ -43,8 +43,7 @@
                                       subs))))
          {}
          (reduce (fn [a [k v]] (assoc a k v)) {} changed-ss))]
-     (prn res)
-     (reset! render-atom res))))
+     (reset! render-atom (merge old-render-state res)))))
 
 (defn reg-event-db [k f]
   (swap! events assoc k f))
@@ -70,16 +69,9 @@
       {}
       @*subs)))
 
-(reset! state {:name "Anna"
-               :some "321"
-               :amount {:value 1}})
-
-(do (reset! state {:name "Anna"
-                   :some "321"
-                   :amount {:value 1}})
-    (reg-event-db
+(do (reg-event-db
       :inc-state
-      (fn [db] (swap! db update-in [:amount :value] inc)))
+      (fn [db] (swap! db update-in [:amount :value] #(if % (inc %) 0))))
 
     (reg-event-db
       :change-some
