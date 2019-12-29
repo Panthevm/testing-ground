@@ -79,7 +79,9 @@
 
     (reg-event-db
       :append-to-list
-      (fn [db] (update db :list-elemets conj (rand))))
+      (fn [db] (update db :list-elemets
+                      (fn [v]
+                        (vec (conj v (rand)))))))
 
     (reg-ssub
      :->list

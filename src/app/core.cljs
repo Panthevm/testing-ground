@@ -6,12 +6,13 @@
             ))
 
 
+
 (defn comp-without-sub [form]
   [:div (str "FORM VALUE: " form)])
 
 (def some-comp
   (with-meta (fn [{:keys [some-comp-sub]}]
-               [:div (str "123" some-comp-sub)])
+               [:div some-comp-sub])
     {:subs [:some-comp-sub]}))
 
 (def some-list
@@ -21,7 +22,11 @@
        [:div
         [:button {:onclick #(state/dispatch [:append-to-list])}
          "Add to list"]]
-       (apply vector :div (map (fn [l] [:div (str l)]) list-elemets))])
+       (apply vector :div (map-indexed
+                           (fn [idx l]
+                             [:div {:class "item"}
+                              (str "Item #" (inc idx) " " l)])
+                           list-elemets))])
     {:subs [:list-elemets]}))
 
 (def page
@@ -42,7 +47,6 @@
     (fn [{:as ctx :keys [sub1]}]
       [:div {:class "content"}
        [:style app.styles/style]
-       [:h1 "Здарова"]
        [:div sub1]
        page])
     {:subs [:sub1]}))

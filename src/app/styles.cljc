@@ -9,6 +9,8 @@
                               :color "#444"}
                        :background-image "url('https://avatars.mds.yandex.net/get-zen_doc/1641049/pub_5d2da9dc520a9b00ad693277_5d2dac00a98a2a00ac385569/scale_1200')"]
                       [:h1 {:font-size "48px"}]
+                      [:.red {:color "red"
+                              :min-width "30px"}]
                       [:.content {:padding "1rem"}]
                       [:button {:background-color "#fff"
                                 :cursor "pointer"
