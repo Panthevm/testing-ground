@@ -13,18 +13,17 @@
 (def some-list
   (with-meta
     (fn [{:keys [list-elemets]}]
-      (prn "list elements: " list-elemets)
       [:div
-       [:div [:button {:onclick #(state/dispatch [:append-to-list])}
-              "Add to list"]]
-       (vec (cons :div (mapv (fn [l] [:div l]) list-elemets)))])
+       [:div
+        [:button {:onclick #(state/dispatch [:append-to-list])}
+         "Add to list"]]
+       (apply vector :div (map (fn [l] [:div (str l)]) list-elemets))])
     {:subs [:list-elemets]}))
 
 (def page
   (with-meta
     (fn [{:keys [form] :as ss}]
       [:div
-       [:h1 (str form)]
        [:button {:onclick #(state/dispatch [:inc-state])} "Inc state"]
        [:button {:onclick #(state/dispatch [:change-some])} "Change some"]
        [:input {:value form
@@ -45,7 +44,10 @@
 
 (defn mount []
   (render/render layout
-                 (js/document.querySelector "#app")))
+                 (js/document.querySelector "#app")
+                 {:name "Ann"
+                  :amount {:value 1}
+                  :some "74"}))
 
 (defn ^:after-load re-render [] (mount))
 
