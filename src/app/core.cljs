@@ -9,19 +9,24 @@
 
 (def page
   (with-meta
-    (fn [_]
+    (fn [{:keys [form] :as ss}]
       [:div
+       [:h1 (str form)]
+       [:h1 (str form)]
+
+       [:h1 (str form)]
        [:button {:onclick #(state/dispatch [:inc-state])} "Inc state"]
        [:button {:onclick #(state/dispatch [:change-some])} "Change some"]
-       [:h1 "!@#"]
+       [:input {:value form
+                :onchange #(state/dispatch [:input (.. % -target -value)])}]
        [:div some-comp]])
-    {:subs []}))
+    {:subs [:form]}))
 
 (def layout
   (with-meta
     (fn [{:as ctx :keys [sub1]}]
       [:div
-       [:h1 (:h1 ctx)]
+       [:h1 "Здарова"]
        [:div sub1]
        page])
     {:subs [:sub1]}))

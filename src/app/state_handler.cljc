@@ -85,6 +85,19 @@
       :change-some
       (fn [db] (swap! db assoc :some (rand))))
 
+    (reg-event-db
+     :input
+     (fn [db value] (swap! db assoc :input value)))
+
+    (reg-ssub
+     :->input
+     (fn [db] (get db :input)))
+
+    (reg-sub
+     :form
+     :->input
+     (fn [v] v))
+
     (reg-ssub
       :->amount
       (fn [db] (get-in db [:amount :value])))
