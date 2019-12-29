@@ -1,6 +1,10 @@
 (ns ^:figwheel-hooks app.core
   (:require [app.render :as render]
-            [app.state-handler :as state]))
+            [app.state-handler :as state]
+            [garden.core :as garden]
+            [app.styles]
+            ))
+
 
 (defn comp-without-sub [form]
   [:div (str "FORM VALUE: " form)])
@@ -31,13 +35,14 @@
                 :onchange #(state/dispatch [:input (.. % -target -value)])}]
        (comp-without-sub form)
        some-list
-       [:div some-comp]])
+       [:div {:class "some-comp"} some-comp]])
     {:subs [:form]}))
 
 (def layout
   (with-meta
     (fn [{:as ctx :keys [sub1]}]
-      [:div
+      [:div {:class "content"}
+       [:style app.styles/style]
        [:h1 "Здарова"]
        [:div sub1]
        page])

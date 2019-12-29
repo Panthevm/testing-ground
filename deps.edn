@@ -1,5 +1,6 @@
 {:paths ["src" "resources"]
- :deps  {org.clojure/clojurescript {:mvn/version "RELEASE"}}
+ :deps  {org.clojure/clojurescript {:mvn/version "RELEASE"}
+         garden                    {:mvn/version "1.3.5"}}
 
  :aliases {:dev  {:extra-paths ["dev"]
                   :extra-deps  {com.bhauman/figwheel-main {:mvn/version "0.2.3"}}}
