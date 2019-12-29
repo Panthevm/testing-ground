@@ -1,10 +1,34 @@
 (ns app.state-handler)
 
 (def render-atom (atom nil))
-(def state (atom nil))
-(def *subs (atom nil))
-(def ssubs (atom nil))
-(def events (atom nil))
+(def state       (atom nil))
+(def *subs       (atom nil))
+(def ssubs       (atom nil))
+(def events      (atom nil))
+
+(defn reg-event-db [k f]
+  (swap! events assoc k f))
+
+(defn reg-ssub [k f]
+  (swap! ssubs assoc k {:f f}))
+
+(defn reg-sub [k & args]
+  (swap! *subs assoc k {:f (last args)
+                       :subs (drop-last args)}))
+
+(defn dispatch [[k & args]]
+  (swap! state #(apply (get @events k) % args)))
+
+(defn get-init-subs []
+  (let [db @state
+        ssubs @ssubs]
+    (reduce-kv
+     (fn [acc k {:keys [f subs]}]
+        (assoc acc k (apply f (map (fn [{:keys [f]}]
+                                     (f db))
+                                   (map #(% ssubs) subs)))))
+      {}
+      @*subs)))
 
 (add-watch
  state :watcher
@@ -45,45 +69,17 @@
          (reduce (fn [a [k v]] (assoc a k v)) {} changed-ss))]
      (reset! render-atom (merge old-render-state res)))))
 
-(defn reg-event-db [k f]
-  (swap! events assoc k f))
-
-(defn reg-ssub [k f]
-  (swap! ssubs assoc k {:f f}))
-
-(defn reg-sub [k & args]
-  (swap! *subs assoc k {:f (last args)
-                       :subs (drop-last args)}))
-
-(defn dispatch [[k & args]]
-  (apply (get @events k) state args))
-
-(defn get-init-subs []
-  (let [db @state
-        ssubs @ssubs]
-    (reduce-kv
-     (fn [acc k {:keys [f subs]}]
-        (assoc acc k (apply f (map (fn [{:keys [f]}]
-                                     (f db))
-                                   (map #(% ssubs) subs)))))
-      {}
-      @*subs)))
-
 (do (reg-event-db
-      :inc-state
-      (fn [db] (swap! db update-in [:amount :value] #(if % (inc %) 0))))
-
-    (reg-event-db
       :change-some
-      (fn [db] (swap! db assoc :some (rand))))
+      (fn [db] (assoc db :some (rand))))
 
     (reg-event-db
      :input
-     (fn [db value] (swap! db assoc :input value)))
+     (fn [db value] (assoc db :input value)))
 
     (reg-event-db
       :append-to-list
-      (fn [db] (swap! db update :list-elemets conj (rand))))
+      (fn [db] (update db :list-elemets conj (rand))))
 
     (reg-ssub
      :->list
@@ -104,6 +100,21 @@
      (fn [v] v))
 
     (reg-ssub
+      :->some-comp-sub
+      (fn [db] (:some db)))
+
+    (reg-sub
+      :some-comp-sub
+      :->some-comp-sub
+      (fn [v]
+        (str "some: " v)))
+
+
+    (reg-event-db
+      :inc-state
+      (fn [db] (update-in db [:amount :value] #(if % (inc %) 0))))
+
+    (reg-ssub
       :->amount
       (fn [db] (get-in db [:amount :value])))
 
@@ -111,20 +122,9 @@
       :->name
       (fn [db] (:name db)))
 
-    (reg-ssub
-      :->some-comp-sub
-      (fn [db] (:some db)))
-
     (reg-sub
       :sub1
       :->amount
       :->name
       (fn [amount name]
-        (str amount name)))
-
-    (reg-sub
-      :some-comp-sub
-      :->some-comp-sub
-      (fn [v]
-        (str "some: " v))))
-
+        (str amount name))))

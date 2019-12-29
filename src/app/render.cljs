@@ -49,7 +49,7 @@
                component))
            view))
 
-(defn render [view root]
+(defn render [view root init-state]
   (let [old @vdom]
     (->> view
          (prewalk-update (state/get-init-subs))
@@ -57,9 +57,7 @@
          hiccup/conform
          (reset! vdom)
          (update-element root old))
-    (reset! state/state {:name "Ann"
-                         :amount {:value 1}
-                         :some "74" })))
+    (reset! state/state init-state)))
 
 (defn re-render [new-state hiccup]
   (prewalk (fn [node]
