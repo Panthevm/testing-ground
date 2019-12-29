@@ -10,6 +10,16 @@
                [:div (str "123" some-comp-sub)])
     {:subs [:some-comp-sub]}))
 
+(def some-list
+  (with-meta
+    (fn [{:keys [list-elemets]}]
+      (prn "list elements: " list-elemets)
+      [:div
+       [:div [:button {:onclick #(state/dispatch [:append-to-list])}
+              "Add to list"]]
+       (vec (cons :div (mapv (fn [l] [:div l]) list-elemets)))])
+    {:subs [:list-elemets]}))
+
 (def page
   (with-meta
     (fn [{:keys [form] :as ss}]
@@ -20,6 +30,7 @@
        [:input {:value form
                 :onchange #(state/dispatch [:input (.. % -target -value)])}]
        (comp-without-sub form)
+       some-list
        [:div some-comp]])
     {:subs [:form]}))
 

@@ -81,6 +81,19 @@
      :input
      (fn [db value] (swap! db assoc :input value)))
 
+    (reg-event-db
+      :append-to-list
+      (fn [db] (swap! db update :list-elemets conj (rand))))
+
+    (reg-ssub
+     :->list
+     (fn [db] (get db :list-elemets)))
+
+    (reg-sub
+     :list-elemets
+     :->list
+     (fn [v] v))
+
     (reg-ssub
      :->input
      (fn [db] (get db :input)))

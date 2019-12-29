@@ -56,7 +56,10 @@
          (reset! hiccup-dom)
          hiccup/conform
          (reset! vdom)
-         (update-element root old))))
+         (update-element root old))
+    (reset! state/state {:name "Ann"
+                         :amount {:value 1}
+                         :some "74" })))
 
 (defn re-render [new-state hiccup]
   (prewalk (fn [node]
@@ -74,8 +77,6 @@
  state/render-atom
  :render
  (fn [_ _ old-state new-state]
-   (prn "old state: " old-state)
-   (prn "new state: " new-state)
    (let [old @vdom]
      (->> @hiccup-dom
           (re-render new-state)
